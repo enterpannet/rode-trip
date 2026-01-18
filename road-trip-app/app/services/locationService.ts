@@ -89,6 +89,16 @@ class LocationService {
   isTracking(): boolean {
     return this.isWatching;
   }
+
+  async getLocations(roomId: string) {
+    try {
+      const response = await apiService.getLocations(roomId);
+      return response;
+    } catch (error) {
+      console.error('Error getting locations:', error);
+      throw error;
+    }
+  }
 }
 
 export const locationService = new LocationService();

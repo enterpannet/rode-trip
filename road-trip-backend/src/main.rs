@@ -138,11 +138,19 @@ async fn run_migrations_seaorm(db: &sea_orm::DatabaseConnection) -> Result<(), B
             description VARCHAR,
             created_by UUID NOT NULL REFERENCES users(id) ON DELETE CASCADE,
             created_at TIMESTAMPTZ NOT NULL DEFAULT CURRENT_TIMESTAMP,
-            updated_at TIMESTAMPTZ NOT NULL DEFAULT CURRENT_TIMESTAMP
+            updated_at TIMESTAMPTZ NOT NULL DEFAULT CURRENT_TIMESTAMP,
+            is_active BOOLEAN NOT NULL DEFAULT true
         )
         "#
     );
     db.execute(stmt).await?;
+    
+    // Add is_active column if it doesn't exist (for existing tables)
+    let stmt = Statement::from_string(
+        db.get_database_backend(),
+        "ALTER TABLE rooms ADD COLUMN IF NOT EXISTS is_active BOOLEAN NOT NULL DEFAULT true"
+    );
+    let _ = db.execute(stmt).await; // Ignore error if column already exists
     
     let stmt = Statement::from_string(
         db.get_database_backend(),
@@ -222,11 +230,25 @@ async fn run_migrations_seaorm(db: &sea_orm::DatabaseConnection) -> Result<(), B
             user_id UUID NOT NULL REFERENCES users(id) ON DELETE CASCADE,
             latitude DOUBLE PRECISION NOT NULL,
             longitude DOUBLE PRECISION NOT NULL,
-            updated_at TIMESTAMPTZ NOT NULL DEFAULT CURRENT_TIMESTAMP
+            timestamp TIMESTAMPTZ NOT NULL DEFAULT CURRENT_TIMESTAMP
         )
         "#
     );
     db.execute(stmt).await?;
+    
+    // Add timestamp column if it doesn't exist (for existing tables)
+    let stmt = Statement::from_string(
+        db.get_database_backend(),
+        "ALTER TABLE locations ADD COLUMN IF NOT EXISTS timestamp TIMESTAMPTZ NOT NULL DEFAULT CURRENT_TIMESTAMP"
+    );
+    let _ = db.execute(stmt).await; // Ignore error if column already exists
+    
+    // Remove updated_at column if it exists (migration from old schema)
+    let stmt = Statement::from_string(
+        db.get_database_backend(),
+        "ALTER TABLE locations DROP COLUMN IF EXISTS updated_at"
+    );
+    let _ = db.execute(stmt).await; // Ignore error if column doesn't exist
     
     let stmt = Statement::from_string(
         db.get_database_backend(),
