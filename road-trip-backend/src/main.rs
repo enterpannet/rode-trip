@@ -90,9 +90,14 @@ async fn run_migrations_seaorm(db: &sea_orm::DatabaseConnection) -> Result<(), B
             avatar VARCHAR,
             created_at TIMESTAMPTZ NOT NULL DEFAULT CURRENT_TIMESTAMP,
             updated_at TIMESTAMPTZ NOT NULL DEFAULT CURRENT_TIMESTAMP
-        );
-        CREATE INDEX IF NOT EXISTS idx_users_email ON users(email);
+        )
         "#
+    );
+    db.execute(stmt).await?;
+    
+    let stmt = Statement::from_string(
+        db.get_database_backend(),
+        "CREATE INDEX IF NOT EXISTS idx_users_email ON users(email)"
     );
     db.execute(stmt).await?;
     
@@ -106,10 +111,20 @@ async fn run_migrations_seaorm(db: &sea_orm::DatabaseConnection) -> Result<(), B
             user_id UUID NOT NULL REFERENCES users(id) ON DELETE CASCADE,
             expires_at TIMESTAMPTZ NOT NULL,
             created_at TIMESTAMPTZ NOT NULL DEFAULT CURRENT_TIMESTAMP
-        );
-        CREATE INDEX IF NOT EXISTS idx_sessions_token ON sessions(session_token);
-        CREATE INDEX IF NOT EXISTS idx_sessions_user_id ON sessions(user_id);
+        )
         "#
+    );
+    db.execute(stmt).await?;
+    
+    let stmt = Statement::from_string(
+        db.get_database_backend(),
+        "CREATE INDEX IF NOT EXISTS idx_sessions_token ON sessions(session_token)"
+    );
+    db.execute(stmt).await?;
+    
+    let stmt = Statement::from_string(
+        db.get_database_backend(),
+        "CREATE INDEX IF NOT EXISTS idx_sessions_user_id ON sessions(user_id)"
     );
     db.execute(stmt).await?;
     
@@ -124,9 +139,14 @@ async fn run_migrations_seaorm(db: &sea_orm::DatabaseConnection) -> Result<(), B
             created_by UUID NOT NULL REFERENCES users(id) ON DELETE CASCADE,
             created_at TIMESTAMPTZ NOT NULL DEFAULT CURRENT_TIMESTAMP,
             updated_at TIMESTAMPTZ NOT NULL DEFAULT CURRENT_TIMESTAMP
-        );
-        CREATE INDEX IF NOT EXISTS idx_rooms_created_by ON rooms(created_by);
+        )
         "#
+    );
+    db.execute(stmt).await?;
+    
+    let stmt = Statement::from_string(
+        db.get_database_backend(),
+        "CREATE INDEX IF NOT EXISTS idx_rooms_created_by ON rooms(created_by)"
     );
     db.execute(stmt).await?;
     
@@ -140,10 +160,20 @@ async fn run_migrations_seaorm(db: &sea_orm::DatabaseConnection) -> Result<(), B
             user_id UUID NOT NULL REFERENCES users(id) ON DELETE CASCADE,
             joined_at TIMESTAMPTZ NOT NULL DEFAULT CURRENT_TIMESTAMP,
             UNIQUE(room_id, user_id)
-        );
-        CREATE INDEX IF NOT EXISTS idx_room_members_room_id ON room_members(room_id);
-        CREATE INDEX IF NOT EXISTS idx_room_members_user_id ON room_members(user_id);
+        )
         "#
+    );
+    db.execute(stmt).await?;
+    
+    let stmt = Statement::from_string(
+        db.get_database_backend(),
+        "CREATE INDEX IF NOT EXISTS idx_room_members_room_id ON room_members(room_id)"
+    );
+    db.execute(stmt).await?;
+    
+    let stmt = Statement::from_string(
+        db.get_database_backend(),
+        "CREATE INDEX IF NOT EXISTS idx_room_members_user_id ON room_members(user_id)"
     );
     db.execute(stmt).await?;
     
@@ -159,11 +189,26 @@ async fn run_migrations_seaorm(db: &sea_orm::DatabaseConnection) -> Result<(), B
             image_url VARCHAR,
             message_type VARCHAR NOT NULL DEFAULT 'text',
             created_at TIMESTAMPTZ NOT NULL DEFAULT CURRENT_TIMESTAMP
-        );
-        CREATE INDEX IF NOT EXISTS idx_messages_room_id ON messages(room_id);
-        CREATE INDEX IF NOT EXISTS idx_messages_user_id ON messages(user_id);
-        CREATE INDEX IF NOT EXISTS idx_messages_created_at ON messages(created_at);
+        )
         "#
+    );
+    db.execute(stmt).await?;
+    
+    let stmt = Statement::from_string(
+        db.get_database_backend(),
+        "CREATE INDEX IF NOT EXISTS idx_messages_room_id ON messages(room_id)"
+    );
+    db.execute(stmt).await?;
+    
+    let stmt = Statement::from_string(
+        db.get_database_backend(),
+        "CREATE INDEX IF NOT EXISTS idx_messages_user_id ON messages(user_id)"
+    );
+    db.execute(stmt).await?;
+    
+    let stmt = Statement::from_string(
+        db.get_database_backend(),
+        "CREATE INDEX IF NOT EXISTS idx_messages_created_at ON messages(created_at)"
     );
     db.execute(stmt).await?;
     
@@ -178,10 +223,20 @@ async fn run_migrations_seaorm(db: &sea_orm::DatabaseConnection) -> Result<(), B
             latitude DOUBLE PRECISION NOT NULL,
             longitude DOUBLE PRECISION NOT NULL,
             updated_at TIMESTAMPTZ NOT NULL DEFAULT CURRENT_TIMESTAMP
-        );
-        CREATE INDEX IF NOT EXISTS idx_locations_room_id ON locations(room_id);
-        CREATE INDEX IF NOT EXISTS idx_locations_user_id ON locations(user_id);
+        )
         "#
+    );
+    db.execute(stmt).await?;
+    
+    let stmt = Statement::from_string(
+        db.get_database_backend(),
+        "CREATE INDEX IF NOT EXISTS idx_locations_room_id ON locations(room_id)"
+    );
+    db.execute(stmt).await?;
+    
+    let stmt = Statement::from_string(
+        db.get_database_backend(),
+        "CREATE INDEX IF NOT EXISTS idx_locations_user_id ON locations(user_id)"
     );
     db.execute(stmt).await?;
     
@@ -197,11 +252,26 @@ async fn run_migrations_seaorm(db: &sea_orm::DatabaseConnection) -> Result<(), B
             started_at TIMESTAMPTZ,
             ended_at TIMESTAMPTZ,
             created_at TIMESTAMPTZ NOT NULL DEFAULT CURRENT_TIMESTAMP
-        );
-        CREATE INDEX IF NOT EXISTS idx_voice_calls_room_id ON voice_calls(room_id);
-        CREATE INDEX IF NOT EXISTS idx_voice_calls_caller_id ON voice_calls(caller_id);
-        CREATE INDEX IF NOT EXISTS idx_voice_calls_status ON voice_calls(status);
+        )
         "#
+    );
+    db.execute(stmt).await?;
+    
+    let stmt = Statement::from_string(
+        db.get_database_backend(),
+        "CREATE INDEX IF NOT EXISTS idx_voice_calls_room_id ON voice_calls(room_id)"
+    );
+    db.execute(stmt).await?;
+    
+    let stmt = Statement::from_string(
+        db.get_database_backend(),
+        "CREATE INDEX IF NOT EXISTS idx_voice_calls_caller_id ON voice_calls(caller_id)"
+    );
+    db.execute(stmt).await?;
+    
+    let stmt = Statement::from_string(
+        db.get_database_backend(),
+        "CREATE INDEX IF NOT EXISTS idx_voice_calls_status ON voice_calls(status)"
     );
     db.execute(stmt).await?;
     

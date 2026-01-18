@@ -1,5 +1,5 @@
 use sea_orm::{Database, DatabaseConnection};
-use sqlx::{postgres::PgConnectOptions, PgPool, Postgres};
+use sqlx::{PgPool, Postgres};
 use tracing::{info, warn};
 use url::Url;
 

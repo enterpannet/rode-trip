@@ -71,11 +71,17 @@ pub async fn create_room(
     State(app_state): State<crate::routes::AppState>,
     Extension(user): Extension<user::Model>,
     Json(payload): Json<CreateRoomRequest>,
-) -> Result<Json<RoomResponse>, StatusCode> {
+) -> Result<Json<RoomResponse>, (StatusCode, Json<serde_json::Value>)> {
     let room = app_state.room_service
         .create_room(payload.name, payload.description, user.id)
         .await
-        .map_err(|_| StatusCode::INTERNAL_SERVER_ERROR)?;
+        .map_err(|e| {
+            let error_msg = format!("{}", e);
+            (
+                StatusCode::INTERNAL_SERVER_ERROR,
+                Json(serde_json::json!({"error": error_msg})),
+            )
+        })?;
 
     Ok(Json(RoomResponse::from(room)))
 }
@@ -83,11 +89,17 @@ pub async fn create_room(
 pub async fn get_rooms(
     State(app_state): State<crate::routes::AppState>,
     Extension(user): Extension<user::Model>,
-) -> Result<Json<Vec<RoomResponse>>, StatusCode> {
+) -> Result<Json<Vec<RoomResponse>>, (StatusCode, Json<serde_json::Value>)> {
     let rooms = app_state.room_service
         .get_user_rooms(user.id)
         .await
-        .map_err(|_| StatusCode::INTERNAL_SERVER_ERROR)?;
+        .map_err(|e| {
+            let error_msg = format!("{}", e);
+            (
+                StatusCode::INTERNAL_SERVER_ERROR,
+                Json(serde_json::json!({"error": error_msg})),
+            )
+        })?;
 
     let rooms_response: Vec<RoomResponse> = rooms
         .into_iter()
@@ -101,11 +113,17 @@ pub async fn join_room(
     State(app_state): State<crate::routes::AppState>,
     Extension(user): Extension<user::Model>,
     Json(payload): Json<JoinRoomRequest>,
-) -> Result<Json<serde_json::Value>, StatusCode> {
+) -> Result<Json<serde_json::Value>, (StatusCode, Json<serde_json::Value>)> {
     app_state.room_service
         .join_room(payload.room_id, user.id)
         .await
-        .map_err(|_| StatusCode::BAD_REQUEST)?;
+        .map_err(|e| {
+            let error_msg = format!("{}", e);
+            (
+                StatusCode::BAD_REQUEST,
+                Json(serde_json::json!({"error": error_msg})),
+            )
+        })?;
 
     Ok(Json(serde_json::json!({"message": "Joined room successfully"})))
 }
