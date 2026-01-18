@@ -75,39 +75,137 @@ async fn main() -> Result<(), Box<dyn std::error::Error>> {
 }
 
 async fn run_migrations_seaorm(db: &sea_orm::DatabaseConnection) -> Result<(), Box<dyn std::error::Error>> {
-    // Create tables directly using SQL generated from SeaORM entities
+    // Create tables using SQL statements
     // This is a simplified approach - for production, use sea-orm-cli
     
-    let backend = db.get_database_backend();
-    let schema = Schema::new(backend);
-    
     // Create users table
-    let stmt = schema.create_table_from_entity(crate::entities::user::Entity);
+    let stmt = Statement::from_string(
+        db.get_database_backend(),
+        r#"
+        CREATE TABLE IF NOT EXISTS users (
+            id UUID PRIMARY KEY,
+            name VARCHAR NOT NULL,
+            email VARCHAR NOT NULL UNIQUE,
+            password_hash VARCHAR NOT NULL,
+            avatar VARCHAR,
+            created_at TIMESTAMPTZ NOT NULL DEFAULT CURRENT_TIMESTAMP,
+            updated_at TIMESTAMPTZ NOT NULL DEFAULT CURRENT_TIMESTAMP
+        );
+        CREATE INDEX IF NOT EXISTS idx_users_email ON users(email);
+        "#
+    );
     db.execute(stmt).await?;
     
     // Create sessions table
-    let stmt = schema.create_table_from_entity(crate::entities::session::Entity);
+    let stmt = Statement::from_string(
+        db.get_database_backend(),
+        r#"
+        CREATE TABLE IF NOT EXISTS sessions (
+            id UUID PRIMARY KEY,
+            session_token VARCHAR NOT NULL UNIQUE,
+            user_id UUID NOT NULL REFERENCES users(id) ON DELETE CASCADE,
+            expires_at TIMESTAMPTZ NOT NULL,
+            created_at TIMESTAMPTZ NOT NULL DEFAULT CURRENT_TIMESTAMP
+        );
+        CREATE INDEX IF NOT EXISTS idx_sessions_token ON sessions(session_token);
+        CREATE INDEX IF NOT EXISTS idx_sessions_user_id ON sessions(user_id);
+        "#
+    );
     db.execute(stmt).await?;
     
     // Create rooms table
-    let stmt = schema.create_table_from_entity(crate::entities::room::Entity);
+    let stmt = Statement::from_string(
+        db.get_database_backend(),
+        r#"
+        CREATE TABLE IF NOT EXISTS rooms (
+            id UUID PRIMARY KEY,
+            name VARCHAR NOT NULL,
+            description VARCHAR,
+            created_by UUID NOT NULL REFERENCES users(id) ON DELETE CASCADE,
+            created_at TIMESTAMPTZ NOT NULL DEFAULT CURRENT_TIMESTAMP,
+            updated_at TIMESTAMPTZ NOT NULL DEFAULT CURRENT_TIMESTAMP
+        );
+        CREATE INDEX IF NOT EXISTS idx_rooms_created_by ON rooms(created_by);
+        "#
+    );
     db.execute(stmt).await?;
     
     // Create room_members table
-    let stmt = schema.create_table_from_entity(crate::entities::room_member::Entity);
+    let stmt = Statement::from_string(
+        db.get_database_backend(),
+        r#"
+        CREATE TABLE IF NOT EXISTS room_members (
+            id UUID PRIMARY KEY,
+            room_id UUID NOT NULL REFERENCES rooms(id) ON DELETE CASCADE,
+            user_id UUID NOT NULL REFERENCES users(id) ON DELETE CASCADE,
+            joined_at TIMESTAMPTZ NOT NULL DEFAULT CURRENT_TIMESTAMP,
+            UNIQUE(room_id, user_id)
+        );
+        CREATE INDEX IF NOT EXISTS idx_room_members_room_id ON room_members(room_id);
+        CREATE INDEX IF NOT EXISTS idx_room_members_user_id ON room_members(user_id);
+        "#
+    );
     db.execute(stmt).await?;
     
     // Create messages table
-    let stmt = schema.create_table_from_entity(crate::entities::message::Entity);
+    let stmt = Statement::from_string(
+        db.get_database_backend(),
+        r#"
+        CREATE TABLE IF NOT EXISTS messages (
+            id UUID PRIMARY KEY,
+            room_id UUID NOT NULL REFERENCES rooms(id) ON DELETE CASCADE,
+            user_id UUID NOT NULL REFERENCES users(id) ON DELETE CASCADE,
+            text VARCHAR,
+            image_url VARCHAR,
+            message_type VARCHAR NOT NULL DEFAULT 'text',
+            created_at TIMESTAMPTZ NOT NULL DEFAULT CURRENT_TIMESTAMP
+        );
+        CREATE INDEX IF NOT EXISTS idx_messages_room_id ON messages(room_id);
+        CREATE INDEX IF NOT EXISTS idx_messages_user_id ON messages(user_id);
+        CREATE INDEX IF NOT EXISTS idx_messages_created_at ON messages(created_at);
+        "#
+    );
     db.execute(stmt).await?;
     
     // Create locations table
-    let stmt = schema.create_table_from_entity(crate::entities::location::Entity);
+    let stmt = Statement::from_string(
+        db.get_database_backend(),
+        r#"
+        CREATE TABLE IF NOT EXISTS locations (
+            id UUID PRIMARY KEY,
+            room_id UUID NOT NULL REFERENCES rooms(id) ON DELETE CASCADE,
+            user_id UUID NOT NULL REFERENCES users(id) ON DELETE CASCADE,
+            latitude DOUBLE PRECISION NOT NULL,
+            longitude DOUBLE PRECISION NOT NULL,
+            updated_at TIMESTAMPTZ NOT NULL DEFAULT CURRENT_TIMESTAMP
+        );
+        CREATE INDEX IF NOT EXISTS idx_locations_room_id ON locations(room_id);
+        CREATE INDEX IF NOT EXISTS idx_locations_user_id ON locations(user_id);
+        "#
+    );
     db.execute(stmt).await?;
     
     // Create voice_calls table
-    let stmt = schema.create_table_from_entity(crate::entities::voice_call::Entity);
+    let stmt = Statement::from_string(
+        db.get_database_backend(),
+        r#"
+        CREATE TABLE IF NOT EXISTS voice_calls (
+            id UUID PRIMARY KEY,
+            room_id UUID NOT NULL REFERENCES rooms(id) ON DELETE CASCADE,
+            caller_id UUID NOT NULL REFERENCES users(id) ON DELETE CASCADE,
+            status VARCHAR NOT NULL DEFAULT 'pending',
+            started_at TIMESTAMPTZ,
+            ended_at TIMESTAMPTZ,
+            created_at TIMESTAMPTZ NOT NULL DEFAULT CURRENT_TIMESTAMP
+        );
+        CREATE INDEX IF NOT EXISTS idx_voice_calls_room_id ON voice_calls(room_id);
+        CREATE INDEX IF NOT EXISTS idx_voice_calls_caller_id ON voice_calls(caller_id);
+        CREATE INDEX IF NOT EXISTS idx_voice_calls_status ON voice_calls(status);
+        "#
+    );
     db.execute(stmt).await?;
+    
+    tracing::info!("All database tables created successfully");
     
     Ok(())
 }
