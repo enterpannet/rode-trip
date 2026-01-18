@@ -1,0 +1,57 @@
+{
+  "expo": {
+    "name": "Road Trip Buddy",
+    "slug": "road-trip-buddy",
+    "version": "1.0.0",
+    "orientation": "portrait",
+    "userInterfaceStyle": "light",
+    "splash": {
+      "backgroundColor": "#ffffff"
+    },
+    "assetBundlePatterns": [
+      "**/*"
+    ],
+    "ios": {
+      "supportsTablet": true,
+      "bundleIdentifier": "com.roadtripbuddy.app",
+      "infoPlist": {
+        "NSLocationWhenInUseUsageDescription": "Road Trip Buddy needs your location to track your position during trips.",
+        "NSLocationAlwaysAndWhenInUseUsageDescription": "Road Trip Buddy needs your location to track your position during trips.",
+        "NSMicrophoneUsageDescription": "Road Trip Buddy needs microphone access for voice calls."
+      }
+    },
+    "android": {
+      "adaptiveIcon": {
+        "backgroundColor": "#ffffff"
+      },
+      "package": "com.roadtripbuddy.app",
+      "softwareKeyboardLayoutMode": "adjustResize",
+      "permissions": [
+        "ACCESS_FINE_LOCATION",
+        "ACCESS_COARSE_LOCATION",
+        "CAMERA",
+        "RECORD_AUDIO"
+      ]
+    },
+    "web": {
+    },
+    "plugins": [
+      [
+        "expo-location",
+        {
+          "locationAlwaysAndWhenInUsePermission": "Allow Road Trip Buddy to use your location."
+        }
+      ],
+      [
+        "expo-av",
+        {
+          "microphonePermission": "Allow Road Trip Buddy to access your microphone for voice calls."
+        }
+      ]
+    ],
+    "extra": {
+      "apiUrl": "http://192.168.1.102:3000",
+      "wsUrl": "ws://192.168.1.102:3000/ws"
+    }
+  }
+}

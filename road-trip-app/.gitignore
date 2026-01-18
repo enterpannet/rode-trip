@@ -1,0 +1,224 @@
+# ====================================
+# Road Trip App (React Native + Expo) - .gitignore
+# ====================================
+
+# Learn more: https://docs.github.com/en/get-started/getting-started-with-git/ignoring-files
+
+# ========== Dependencies ==========
+# Node.js
+node_modules/
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+lerna-debug.log*
+pnpm-debug.log*
+.pnpm-debug.log*
+package-lock.json
+yarn.lock
+pnpm-lock.yaml
+bun.lock
+
+# ========== Expo ==========
+.expo/
+.expo-shared/
+.expo/
+.expo-shared/
+web-build/
+dist/
+
+# ========== Metro ==========
+.metro/
+.metro-health-check*
+.metro-cache/
+metro.config.js.bak
+
+# ========== Native ==========
+# Android
+*.apk
+*.ap_
+*.aab
+*.dex
+*.class
+bin/
+gen/
+out/
+local.properties
+.gradle/
+build/
+.gradle
+*.hprof
+.keystore
+!debug.keystore
+*.jks
+*.p8
+*.p12
+*.key
+*.mobileprovision
+*.orig.*
+
+# iOS
+*.ipa
+*.dSYM.zip
+*.dSYM
+*.app.dSYM
+*.app.dSYM.zip
+DerivedData/
+*.pbxuser
+!default.pbxuser
+*.mode1v3
+!default.mode1v3
+*.mode2v3
+!default.mode2v3
+*.perspectivev3
+!default.perspectivev3
+xcuserdata/
+*.xccheckout
+*.moved-aside
+*.xccheckout
+*.xcscmblueprint
+*.xcuserstate
+*.xcworkspace
+!default.xcworkspace
+*.hmap
+*.ipa
+*.dSYM.zip
+*.dSYM
+Pods/
+*.framework
+!default.framework
+ios/Pods/
+ios/build/
+ios/*.xcworkspace
+!ios/default.xcworkspace
+
+# ========== Environment ==========
+.env
+.env.local
+.env.*.local
+.env.development
+.env.production
+.env.test
+*.env
+
+# ========== IDE & Editors ==========
+# Visual Studio Code
+.vscode/
+*.code-workspace
+
+# IntelliJ IDEA / Android Studio
+.idea/
+*.iml
+*.iws
+*.ipr
+out/
+
+# Visual Studio
+.vs/
+*.suo
+*.user
+*.userosscache
+*.sln.docstates
+
+# Vim
+*.swp
+*.swo
+*~
+.*.sw[a-z]
+*.un~
+Session.vim
+.netrwhist
+
+# ========== OS Files ==========
+# macOS
+.DS_Store
+.AppleDouble
+.LSOverride
+Icon
+._*
+.DocumentRevisions-V100
+.fseventsd
+.Spotlight-V100
+.TemporaryItems
+.Trashes
+.VolumeIcon.icns
+.com.apple.timemachine.donotpresent
+*.pem
+
+# Windows
+Thumbs.db
+Thumbs.db:encryptable
+ehthumbs.db
+ehthumbs_vista.db
+*.stackdump
+[Dd]esktop.ini
+$RECYCLE.BIN/
+*.cab
+*.msi
+*.msix
+*.msm
+*.msp
+*.lnk
+
+# Linux
+*~
+.directory
+.Trash-*
+.nfs*
+
+# ========== TypeScript ==========
+*.tsbuildinfo
+*.tsbuildinfo.*
+
+# ========== Logs ==========
+*.log
+logs/
+*.log.*
+log/
+
+# ========== Testing ==========
+coverage/
+.nyc_output/
+*.lcov
+.jest/
+
+# ========== Debug ==========
+debug/
+.vscode-test/
+*.vsix
+
+# ========== Temporary ==========
+tmp/
+temp/
+*.tmp
+*.temp
+*.bak
+*.backup
+*.old
+*.orig
+.cache/
+
+# ========== Misc ==========
+*.pid
+*.seed
+*.pid.lock
+.npm
+.eslintcache
+.stylelintcache
+.node_repl_history
+.yarn-integrity
+.parcel-cache
+.fusebox/
+.tern-port
+.pnp.*
+.yarn/cache
+.yarn/unplugged
+.yarn/build-state.yml
+.yarn/install-state.gz
+.yarn/*
+!.yarn/patches
+!.yarn/plugins
+!.yarn/releases
+!.yarn/sdks
+!.yarn/versions
+watchmanconfig
+.react-native/

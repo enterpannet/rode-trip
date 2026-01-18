@@ -1,0 +1,154 @@
+### Road Trip Buddy API Tests
+### VS Code REST Client extension required
+
+@baseUrl = http://localhost:3000
+@contentType = application/json
+
+### Variables (will be set by responses)
+@userId = 
+@roomId = 
+@messageId = 
+
+###
+
+### 1. Health Check
+GET {{baseUrl}}/api/health
+
+###
+
+### 2. Register User
+POST {{baseUrl}}/api/auth/register
+Content-Type: {{contentType}}
+
+{
+  "name": "Test User",
+  "email": "test@example.com",
+  "password": "password123"
+}
+
+> {%
+  client.global.set("userId", response.body.id);
+%}
+
+###
+
+### 3. Login
+POST {{baseUrl}}/api/auth/login
+Content-Type: {{contentType}}
+
+{
+  "email": "test@example.com",
+  "password": "password123"
+}
+
+> {%
+  client.global.set("userId", response.body.id);
+%}
+
+###
+
+### 4. Get Current User
+GET {{baseUrl}}/api/auth/me
+
+###
+
+### 5. Create Room
+POST {{baseUrl}}/api/rooms
+Content-Type: {{contentType}}
+
+{
+  "name": "Road Trip to Beach",
+  "description": "Weekend trip to the beach"
+}
+
+> {%
+  client.global.set("roomId", response.body.id);
+%}
+
+###
+
+### 6. Get User Rooms
+GET {{baseUrl}}/api/rooms
+
+###
+
+### 7. Join Room
+POST {{baseUrl}}/api/rooms/join
+Content-Type: {{contentType}}
+
+{
+  "room_id": "{{roomId}}"
+}
+
+###
+
+### 8. Get Room Members
+GET {{baseUrl}}/api/rooms/{{roomId}}/members
+
+###
+
+### 9. Send Text Message
+POST {{baseUrl}}/api/rooms/{{roomId}}/messages
+Content-Type: {{contentType}}
+
+{
+  "text": "Hello everyone! Let's meet at the parking lot at 8 AM.",
+  "message_type": "text"
+}
+
+> {%
+  client.global.set("messageId", response.body.id);
+%}
+
+###
+
+### 10. Send Image Message
+POST {{baseUrl}}/api/rooms/{{roomId}}/messages
+Content-Type: {{contentType}}
+
+{
+  "image_url": "https://example.com/image.jpg",
+  "message_type": "image"
+}
+
+###
+
+### 11. Get Messages (Page 0)
+GET {{baseUrl}}/api/rooms/{{roomId}}/messages?page=0&page_size=20
+
+###
+
+### 12. Get Messages (Page 1)
+GET {{baseUrl}}/api/rooms/{{roomId}}/messages?page=1&page_size=20
+
+###
+
+### 13. Update Location
+POST {{baseUrl}}/api/rooms/{{roomId}}/location
+Content-Type: {{contentType}}
+
+{
+  "latitude": 13.7563,
+  "longitude": 100.5018
+}
+
+###
+
+### 14. Get Locations
+GET {{baseUrl}}/api/rooms/{{roomId}}/locations
+
+###
+
+### 15. Update Location Again
+POST {{baseUrl}}/api/rooms/{{roomId}}/location
+Content-Type: {{contentType}}
+
+{
+  "latitude": 13.7565,
+  "longitude": 100.5020
+}
+
+###
+
+### 16. Logout
+POST {{baseUrl}}/api/auth/logout
